@@ -11,6 +11,7 @@ public class GameService {
     @Autowired
     private GameRepository gameRepository;
 
+    // luuđiểm
     public void savePlayerScore(Player player) {
         gameRepository.save(player);
     }
@@ -18,11 +19,18 @@ public class GameService {
     public Player getPlayerByEmail(String email) {
         return gameRepository.findByEmail(email);
     }
-    public void updatePlayerScore(Player player) {
-        Player playerInDb = gameRepository.findById(player.getId()).orElse(null);
-        if (playerInDb != null) {
-            playerInDb.setScore(player.getScore());
-            gameRepository.save(playerInDb);
+
+    // lấy thông tin user qua id
+    public Player getPlayerById(Long id) {
+        return gameRepository.findById(id).orElse(null);
+    }
+
+    // update điểm
+    public void updatePlayerScore(Long playerId, int newScore) {
+        Player player = getPlayerById(playerId);
+        if (player != null) {
+            player.setScore(newScore);
+            gameRepository.save(player);
         }
     }
 }
