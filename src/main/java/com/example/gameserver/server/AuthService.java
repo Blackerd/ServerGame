@@ -13,29 +13,32 @@ public class AuthService {
     @Autowired
     private GameRepository gameRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // đăng ký
+    // Hàm đăng ký người dùng
     public String register(Player player) {
-        // Kiểm tra xem email đã tồn tại chưa
-        if (gameRepository.findByEmail(player.getEmail()) != null) {
-            return "Email already registered!";
+        if (gameRepository.existsByUsername(player.getUsername())) {
+            return "Username already registered!";
         }
 
         // Mã hóa mật khẩu trước khi lưu
-        player.setPassword(passwordEncoder.encode(player.getPassword()));
+        String encodedPassword = passwordEncoder.encode(player.getPassword());
+        player.setPassword(encodedPassword);
+
+        // Lưu người dùng vào cơ sở dữ liệu
         gameRepository.save(player);
+
         return "Registration successful!";
     }
 
-    // đăng nhập
+    // Hàm đăng nhập
     public String login(LoginRequest loginRequest) {
-        Player player = gameRepository.findByEmail(loginRequest.getEmail());
+        Player player = gameRepository.findByUsername(loginRequest.getUsername());
         if (player == null) {
             return "User not found!";
         }
 
-        // Kiểm tra mật khẩu sau khi giải mã
+        // Kiểm tra mật khẩu có khớp không
         if (!passwordEncoder.matches(loginRequest.getPassword(), player.getPassword())) {
             return "Invalid password!";
         }

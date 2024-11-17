@@ -13,22 +13,41 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    // xử lý đăng ky
+    /**
+     * Endpoint for user registration.
+     *
+     * @param player The player object containing registration details.
+     * @return ResponseEntity with status and message.
+     */
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Player player) {
-        String result = authService.register(player);
-        if (result.equals("Email already registered!")) {
-            return ResponseEntity.status(409).body(result);
+        try {
+            String result = authService.register(player);
+            if ("Email already registered!".equals(result)) {
+                return ResponseEntity.status(409).body(result); // 409 Conflict
+            }
+            return ResponseEntity.ok(result); // 200 OK
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred during registration: " + e.getMessage()); // 500 Internal Server Error
         }
-        return ResponseEntity.ok(result);
     }
-    // xử lý đăng nhập
+
+    /**
+     * Endpoint for user login.
+     *
+     * @param loginRequest The login request object containing email and password.
+     * @return ResponseEntity with status and message.
+     */
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        String result = authService.login(loginRequest);
-        if (result.equals("Login successful!")) {
-            return ResponseEntity.ok(result);
+        try {
+            String result = authService.login(loginRequest);
+            if ("Login successful!".equals(result)) {
+                return ResponseEntity.ok(result); // 200 OK
+            }
+            return ResponseEntity.status(401).body(result); // 401 Unauthorized
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage()); // 500 Internal Server Error
         }
-        return ResponseEntity.status(401).body(result);
     }
 }

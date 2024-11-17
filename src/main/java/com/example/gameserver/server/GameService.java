@@ -25,12 +25,4 @@ public class GameService {
         return gameRepository.findById(id).orElse(null);
     }
 
-    // update điểm
-    public void updatePlayerScore(Long playerId, int newScore) {
-        Player player = getPlayerById(playerId);
-        if (player != null) {
-            player.setScore(newScore);
-            gameRepository.save(player);
-        }
-    }
 }
