@@ -1,23 +1,40 @@
 package com.example.gameserver.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "players") // Đảm bảo ánh xạ chính xác với bảng "players"
 public class Player {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-    private String password;
-    private String displayName;
-    private String email;  // Add the email field
+    @Column(nullable = false, unique = true)
+    private String username; // Tên đăng nhập (không trùng lặp)
 
-    // Getter và Setter methods
+    @Column(nullable = false)
+    private String passwordHash; // Mật khẩu mã hóa
+
+    @Column(nullable = false)
+    private String displayName; // Tên hiển thị
+
+    @Column(nullable = false, unique = true)
+    private String email; // Email (không trùng lặp)
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now(); // Thời gian tạo
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt = LocalDateTime.now(); // Thời gian cập nhật
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Getter và Setter
     public Long getId() {
         return id;
     }
@@ -34,12 +51,12 @@ public class Player {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getDisplayName() {
@@ -56,5 +73,13 @@ public class Player {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }

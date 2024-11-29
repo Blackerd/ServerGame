@@ -1,10 +1,13 @@
 package com.example.gameserver.server;
 
+import com.example.gameserver.model.GameSession;
 import com.example.gameserver.model.LoginRequest;
 import com.example.gameserver.model.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -49,5 +52,11 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage()); // 500 Internal Server Error
         }
+    }
+
+    // Lấy danh sách bảng xếp hạng
+    @GetMapping("/leaderboard")
+    public List<GameSession> getLeaderboard(){
+        return authService.getLeaderboard();
     }
 }
