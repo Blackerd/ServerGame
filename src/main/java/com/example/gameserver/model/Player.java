@@ -17,9 +17,6 @@ public class Player {
     @Column(nullable = false)
     private String passwordHash; // Mật khẩu mã hóa
 
-    @Column(nullable = false)
-    private String displayName; // Tên hiển thị
-
     @Column(nullable = false, unique = true)
     private String email; // Email (không trùng lặp)
 
@@ -58,15 +55,6 @@ public class Player {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getEmail() {
         return email;
     }

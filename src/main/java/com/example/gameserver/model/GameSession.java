@@ -2,18 +2,23 @@ package com.example.gameserver.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "game_sessions") // Đảm bảo ánh xạ chính xác với bảng "game_sessions"
+@Table(name = "game_sessions")
 public class GameSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "player_id", nullable = false) // Khóa ngoại đến bảng "players"
-    private Player player;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "game_session_players",
+            joinColumns = @JoinColumn(name = "game_session_id"),
+            inverseJoinColumns = @JoinColumn(name = "player_id")
+    )
+    private List<Player> player; // Thay vì chỉ một người chơi, giờ đây có thể là danh sách người chơi
 
     @Column(nullable = false)
     private int score; // Điểm số trong phiên chơi
@@ -41,11 +46,11 @@ public class GameSession {
         this.id = id;
     }
 
-    public Player getPlayer() {
+    public List<Player> getPlayers() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayers(List<Player> player) {
         this.player = player;
     }
 

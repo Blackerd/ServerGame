@@ -3,6 +3,7 @@ package com.example.gameserver.server;
 import com.example.gameserver.model.GameSession;
 import com.example.gameserver.model.LoginRequest;
 import com.example.gameserver.model.Player;
+import com.example.gameserver.model.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +17,10 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    /**
-     * Endpoint for user registration.
-     *
-     * @param player The player object containing registration details.
-     * @return ResponseEntity with status and message.
-     */
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Player player) {
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
         try {
-            String result = authService.register(player);
+            String result = authService.register(registerRequest);
             if ("Email already registered!".equals(result)) {
                 return ResponseEntity.status(409).body(result); // 409 Conflict
             }
@@ -35,12 +30,6 @@ public class AuthController {
         }
     }
 
-    /**
-     * Endpoint for user login.
-     *
-     * @param loginRequest The login request object containing email and password.
-     * @return ResponseEntity with status and message.
-     */
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         try {
