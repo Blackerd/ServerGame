@@ -20,15 +20,14 @@ public class AuthService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Hàm đăng ký người dùng
-    public String register(RegisterRequest registerRequest) {
+    // Hàm đăng ký người dùng (trả về boolean)
+    public boolean register(RegisterRequest registerRequest) {
         if (playerRepository.existsByUsername(registerRequest.getUsername())) {
-            return "Username already registered!";
+            return false; // Tên người dùng đã tồn tại
         }
 
-        // Kiểm tra email đã tồn tại
         if (playerRepository.existsByEmail(registerRequest.getEmail())) {
-            return "Email already registered!";
+            return false; // Email đã tồn tại
         }
 
         // Mã hóa mật khẩu trước khi lưu
@@ -43,23 +42,21 @@ public class AuthService {
         // Lưu người dùng vào cơ sở dữ liệu
         playerRepository.save(player);
 
-        return "Registration successful!";
+        return true; // Đăng ký thành công
     }
 
+
     // Hàm đăng nhập
-    public String login(LoginRequest loginRequest) {
+    public boolean login(LoginRequest loginRequest) {
         Player player = playerRepository.findByUsername(loginRequest.getUsername());
         if (player == null) {
-            return "User not found!";
+            return false; // Người dùng không tồn tại
         }
 
         // Kiểm tra mật khẩu có khớp không
-        if (!passwordEncoder.matches(loginRequest.getPassword(), player.getPasswordHash())) {
-            return "Invalid password!";
-        }
-
-        return "Login successful!";
+        return passwordEncoder.matches(loginRequest.getPassword(), player.getPasswordHash());
     }
+
 
     // Lấy danh sách bảng xếp hạng
     public List<GameSession> getLeaderboard() {

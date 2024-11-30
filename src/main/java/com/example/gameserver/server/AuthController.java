@@ -17,14 +17,16 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    // Endpoint đăng ký
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
         try {
-            String result = authService.register(registerRequest);
-            if ("Email already registered!".equals(result)) {
-                return ResponseEntity.status(409).body(result); // 409 Conflict
+            boolean isRegistered = authService.register(registerRequest);
+            if (isRegistered) {
+                return ResponseEntity.ok("Registration successful!"); // 200 OK
+            } else {
+                return ResponseEntity.status(409).body("Username or email already exists!"); // 409 Conflict
             }
-            return ResponseEntity.ok(result); // 200 OK
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred during registration: " + e.getMessage()); // 500 Internal Server Error
         }
@@ -33,15 +35,16 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         try {
-            String result = authService.login(loginRequest);
-            if ("Login successful!".equals(result)) {
-                return ResponseEntity.ok(result); // 200 OK
+            boolean isLoggedIn = authService.login(loginRequest);
+            if (isLoggedIn) {
+                return ResponseEntity.ok("Login successful!"); // 200 OK
             }
-            return ResponseEntity.status(401).body(result); // 401 Unauthorized
+            return ResponseEntity.status(401).body("Invalid username or password!"); // 401 Unauthorized
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage()); // 500 Internal Server Error
         }
     }
+
 
     // Lấy danh sách bảng xếp hạng
     @GetMapping("/leaderboard")
