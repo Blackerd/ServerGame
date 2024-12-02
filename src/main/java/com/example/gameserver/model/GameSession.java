@@ -32,8 +32,6 @@ public class GameSession {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now(); // Thời gian tạo
 
-    @Column(nullable = false)
-    private double distance; // Quãng đường (mét)
 
     @PrePersist
     protected void onCreate() {
@@ -85,11 +83,4 @@ public class GameSession {
         return createdAt;
     }
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
 }
