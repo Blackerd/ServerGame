@@ -24,4 +24,8 @@ public interface AuthenticationService {
     SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException;
 
     String generateToken(User user);
+
+    AuthenticationResponse register(AuthenticationRequest request);
+
+
 }

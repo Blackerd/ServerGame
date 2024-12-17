@@ -23,3 +23,6 @@ jwt:
   signerKey: "dsFyyenVljBLPSWeaQWcX0g/7VnnKrEcWXY9JXsdjaKy44o+aj1VBKeU8H+N2rrz"
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+websocket:
+  enabled: true  # Kích hoạt WebSocket
+  path: /ws/chat # Đường dẫn WebSocket
