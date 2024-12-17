@@ -2,6 +2,7 @@ package com.rental.rentalapplication.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class User {
     @Column(nullable = false)
     private String password; // Mật khẩu (nên mã hóa).
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String email; // Email không trùng.
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -37,15 +38,16 @@ public class User {
     )
     private Set<Role> roles; // Nhiều quyền cho 1 người chơi.
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean isOnline; // Trạng thái người chơi có đang online không.
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int totalScore; // Tổng điểm của người chơi (nếu cần xếp hạng).
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt; // Thời gian đăng ký tài khoản.
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @Column(nullable = true)
-    private LocalDateTime lastLogin; // Lần đăng nhập gần nhất.
+    private LocalDateTime lastLogin;
+
 }

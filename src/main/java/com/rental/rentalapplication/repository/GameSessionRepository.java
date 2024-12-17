@@ -9,21 +9,19 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface GameSessionRepository extends JpaRepository<GameSession, Long> {
-
+public interface GameSessionRepository extends JpaRepository<GameSession, UUID> {
     // Lấy danh sách xếp hạng theo điểm số
     @Query("SELECT g FROM GameSession g ORDER BY g.score DESC")
     List<GameSession> findTopScores(Pageable pageable);
 
-    // lấy danh sách xếp hạng theo rank
-    @Query("SELECT g FROM GameSession g ORDER BY g.rank ASC")
-    List<GameSession> findTopRanks(Pageable pageable);
-
-    // Tìm các phiên chơi của một người chơi
-    List<GameSession> findByUsers(User user);
+    // Tìm các phiên chơi của một người chơi (sử dụng UUID cho user)
+    @Query("SELECT g FROM GameSession g JOIN g.users u WHERE u = :user")
+    List<GameSession> findByUser(User user);
 
     // Tìm các phiên chơi trong một khoảng thời gian
-    List<GameSession> findBySessionTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
+    @Query("SELECT g FROM GameSession g WHERE g.startTime >= :startTime AND g.endTime <= :endTime")
+    List<GameSession> findByTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
 }

@@ -69,5 +69,29 @@ public class AuthenticationController {
         return ApiResponse.<Void>builder().status("Success").build();
     }
 
+    @PostMapping("/register")
+    ApiResponse<AuthenticationResponse> register(@RequestBody AuthenticationRequest request) {
+        var result = authenticationServiceImpl.register(request); // Gọi service để đăng ký
+        return ApiResponse.<AuthenticationResponse>builder()
+                .message("Registration successful")
+                .status("success")
+                .timeStamp(LocalDateTime.now())
+                .responseData(result)
+                .build();
+    }
+
+    @PostMapping("/login")
+    ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
+        var result = authenticationServiceImpl.authenticate(request); // Gọi service để đăng nhập
+        return ApiResponse.<AuthenticationResponse>builder()
+                .message("Login successful")
+                .status("success")
+                .timeStamp(LocalDateTime.now())
+                .responseData(result)
+                .build();
+    }
+
+
+
 
 }

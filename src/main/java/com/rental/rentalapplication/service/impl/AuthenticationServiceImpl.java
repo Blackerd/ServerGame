@@ -193,9 +193,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return stringJoiner.toString();
     }
 
-    public boolean register(AuthenticationRequest request) {
+    public AuthenticationResponse register(AuthenticationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new CustomException(Error.USER_EXISTED);
+            throw new CustomException(Error.USER_EXISTED); // Người dùng đã tồn tại
         }
 
         if (request.getUsername().length() < 3) {
@@ -206,15 +206,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new CustomException(Error.PASSWORD_INVALID);
         }
 
+        // Mã hóa mật khẩu
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        // Tạo người dùng mới
         User user = User.builder()
                 .username(request.getUsername())
-                .password(new BCryptPasswordEncoder(10).encode(request.getPassword()))
+                .password(encodedPassword)
                 .build();
 
+        // Lưu người dùng vào cơ sở dữ liệu
         userRepository.save(user);
 
-        return true;
+        // Tạo token cho người dùng mới
+        var token = generateToken(user);
+
+        // Trả về thông tin người dùng mới cùng token
+        return AuthenticationResponse.builder()
+                .token(token)
+                .username(user.getUsername())
+                .isAuthenticated(true)
+                .build();
     }
+
 
 
 }
