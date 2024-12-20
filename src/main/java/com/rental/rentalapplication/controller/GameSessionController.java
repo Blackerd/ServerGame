@@ -24,15 +24,16 @@ public class GameSessionController {
 
     @PostMapping
     public ResponseEntity<String> saveGameSession(@RequestBody SaveGameSessionRequest request) {
-        // Chuyển đổi danh sách userIds thành UUID
-        List<UUID> userIds = request.getUserIds();
-        List<User> users = userRepository.findAllById(userIds.stream().map(UUID::toString).toList());
-        if (users.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid user IDs");
+        // Lấy thông tin người chơi từ userId
+        User user = userRepository.findById(request.getUserIds())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body("Invalid user ID");
         }
 
-        // Lưu phiên chơi
-        gameService.saveGameSession(users, request.getScore(), request.getDuration());
+        // Lưu phiên chơi game
+        gameService.saveGameSession(user, request.getScore(), request.getDuration());
         return ResponseEntity.ok("Game session saved successfully");
     }
 

@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -13,10 +14,8 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-    String id;
-    String username;
-    String firstName;
-    String lastName;
+    UUID id;
+    String email;
     LocalDate dob;
     Set<RoleResponse> roles;
 }

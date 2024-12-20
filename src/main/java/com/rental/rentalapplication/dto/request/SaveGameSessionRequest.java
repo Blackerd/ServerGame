@@ -9,7 +9,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class SaveGameSessionRequest {
-    private List<UUID> userIds; // Danh sách ID người chơi
+    private UUID userIds; // Danh sách ID người chơi
     private int score; // Tổng điểm
     private long duration; // Thời gian chơi
 }

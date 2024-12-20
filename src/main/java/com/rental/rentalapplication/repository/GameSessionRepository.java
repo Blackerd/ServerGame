@@ -1,7 +1,6 @@
 package com.rental.rentalapplication.repository;
 
 import com.rental.rentalapplication.entity.GameSession;
-import com.rental.rentalapplication.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,8 +17,8 @@ public interface GameSessionRepository extends JpaRepository<GameSession, UUID> 
     List<GameSession> findTopScores(Pageable pageable);
 
     // Tìm các phiên chơi của một người chơi (sử dụng UUID cho user)
-    @Query("SELECT g FROM GameSession g JOIN g.users u WHERE u = :user")
-    List<GameSession> findByUser(User user);
+    @Query("SELECT g FROM GameSession g WHERE g.user.id = :userId")
+    List<GameSession> findByUserId(UUID userId);
 
     // Tìm các phiên chơi trong một khoảng thời gian
     @Query("SELECT g FROM GameSession g WHERE g.startTime >= :startTime AND g.endTime <= :endTime")

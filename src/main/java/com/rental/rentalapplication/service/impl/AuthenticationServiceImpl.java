@@ -13,17 +13,17 @@ import com.rental.rentalapplication.dto.request.RefreshRequest;
 import com.rental.rentalapplication.dto.response.AuthenticationResponse;
 import com.rental.rentalapplication.dto.response.IntrospectResponse;
 import com.rental.rentalapplication.entity.InvalidatedToken;
+import com.rental.rentalapplication.entity.Role;
 import com.rental.rentalapplication.entity.User;
 import com.rental.rentalapplication.exception.CustomException;
 import com.rental.rentalapplication.exception.Error;
 import com.rental.rentalapplication.repository.InvalidatedTokenRepository;
+import com.rental.rentalapplication.repository.RoleRepository;
 import com.rental.rentalapplication.repository.UserRepository;
 import com.rental.rentalapplication.service.AuthenticationService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,13 +39,18 @@ import java.util.*;
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+    @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
+    private final RoleRepository roleRepository;
+
+    @Autowired
     private final InvalidatedTokenRepository invalidatedTokenRepository;
 
-
-    public AuthenticationServiceImpl(UserRepository userRepository, InvalidatedTokenRepository invalidatedTokenRepository) {
+    public AuthenticationServiceImpl(UserRepository userRepository, RoleRepository roleRepository, InvalidatedTokenRepository invalidatedTokenRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
@@ -61,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     protected long REFRESHABLE_DURATION;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        var player = userRepository.findByUsername(request.getUsername()).orElseThrow(
+        var player = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new CustomException(Error.USER_NOT_EXISTED)
         );
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -79,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return AuthenticationResponse.builder()
                 .token(token)
-                .username(player.getUsername())
+                .email(player.getEmail())
                 .roles(roleNames)
                 .isAuthenticated(true)
                 .build();
@@ -129,7 +134,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var username = signedJWT.getJWTClaimsSet().getSubject();
 
         var user =
-                userRepository.findByUsername(username).orElseThrow(() -> new CustomException(Error.UNAUTHENTICATED));
+                userRepository.findByEmail(username).orElseThrow(() -> new CustomException(Error.UNAUTHENTICATED));
 
         var token = generateToken(user);
 
@@ -160,7 +165,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getEmail())
                 .issuer("devteria.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
@@ -194,14 +199,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public AuthenticationResponse register(AuthenticationRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new CustomException(Error.USER_EXISTED); // Người dùng đã tồn tại
         }
-
-        if (request.getUsername().length() < 3) {
-            throw new CustomException(Error.USERNAME_INVALID);
-        }
-
         if (request.getPassword().length() < 8) {
             throw new CustomException(Error.PASSWORD_INVALID);
         }
@@ -212,20 +212,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // Tạo người dùng mới
         User user = User.builder()
-                .username(request.getUsername())
+                .email(request.getEmail())
                 .password(encodedPassword)
                 .build();
 
+        // Gán role USER mặc định
+        Set<Role> roles = new HashSet<>();
+        Role role = roleRepository.findById("USER").orElseThrow(() -> new CustomException(Error.ROLE_NOT_FOUND));
+        roles.add(role);
+
+        user.setRoles(roles);
         // Lưu người dùng vào cơ sở dữ liệu
         userRepository.save(user);
 
         // Tạo token cho người dùng mới
         var token = generateToken(user);
 
+        // Tạo danh sách roleNames (nếu cần trả về trong response)
+        List<String> roleNames = new ArrayList<>();
+        for (var roleItem : user.getRoles()) {
+            roleNames.add(roleItem.getName());
+        }
+
         // Trả về thông tin người dùng mới cùng token
         return AuthenticationResponse.builder()
                 .token(token)
-                .username(user.getUsername())
+                .email(user.getEmail())
+                .roles(roleNames)
                 .isAuthenticated(true)
                 .build();
     }

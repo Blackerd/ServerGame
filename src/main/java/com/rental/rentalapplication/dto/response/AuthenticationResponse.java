@@ -12,7 +12,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationResponse {
     String token;
-    String username;
+    String email;
     List<String> roles;
     boolean isAuthenticated;
 }

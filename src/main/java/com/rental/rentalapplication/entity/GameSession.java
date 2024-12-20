@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -19,13 +18,9 @@ public class GameSession {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // UUID duy nhất cho phiên chơi.
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "game_session_players",
-            joinColumns = @JoinColumn(name = "game_session_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users; // Danh sách người chơi trong phiên.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Người chơi duy nhất trong phiên chơi.
 
     @Column(nullable = false)
     private int score; // Tổng điểm của phiên chơi.

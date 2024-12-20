@@ -23,3 +23,8 @@ jwt:
   signerKey: "dsFyyenVljBLPSWeaQWcX0g/7VnnKrEcWXY9JXsdjaKy44o+aj1VBKeU8H+N2rrz"
   valid-duration: 3600 # in second
   refreshable-duration: 36000 # in seconds
+main:
+  allow-bean-definition-overriding: true
+websocket:
+  enabled: true  # Kích hoạt WebSocket
+  path: /game # Đường dẫn WebSocket

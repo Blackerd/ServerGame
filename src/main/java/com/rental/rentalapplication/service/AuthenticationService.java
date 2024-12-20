@@ -9,9 +9,11 @@ import com.rental.rentalapplication.dto.request.RefreshRequest;
 import com.rental.rentalapplication.dto.response.AuthenticationResponse;
 import com.rental.rentalapplication.dto.response.IntrospectResponse;
 import com.rental.rentalapplication.entity.User;
+import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 
+@Service
 public interface AuthenticationService {
     AuthenticationResponse authenticate(AuthenticationRequest request);
 

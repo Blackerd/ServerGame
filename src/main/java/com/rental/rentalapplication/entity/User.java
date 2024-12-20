@@ -22,13 +22,10 @@ public class User {
     private UUID id; // UUID đảm bảo duy nhất cho từng user.
 
     @Column(nullable = false, unique = true)
-    private String username; // Tên đăng nhập không trùng.
+    private String email; // Tên đăng nhập không trùng.
 
     @Column(nullable = false)
     private String password; // Mật khẩu (nên mã hóa).
-
-    @Column(nullable = true, unique = true)
-    private String email; // Email không trùng.
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -49,5 +46,12 @@ public class User {
     private LocalDateTime createdAt;
 
     private LocalDateTime lastLogin;
+
+    @Column(nullable = false)
+    private boolean active = true; // người dùng mặc định active khi tạo
+
+    @Column(nullable = false)
+    private boolean blocked = false; // người dùng mặc định không bị chặn
+
 
 }

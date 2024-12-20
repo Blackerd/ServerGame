@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,7 +44,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable String userId) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID userId) {
         UserResponse user = userService.getUserById(userId);
         return ResponseEntity.ok(user);
     }
@@ -62,7 +63,7 @@ public class UserController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
@@ -73,7 +74,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUser(
-            @PathVariable String userId,
+            @PathVariable UUID userId,
             @RequestBody UserUpdateRequest request
     ) {
         UserResponse updatedUser = userService.updateUserByAdmin(userId, request);
@@ -81,7 +82,7 @@ public class UserController {
     }
 
     /**
-     * Phân trang và lấy danh sách người dùng.
+     * Phân trang và lấy danh sách người dùng (Chỉ Admin mới được truy cập).
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/paged")

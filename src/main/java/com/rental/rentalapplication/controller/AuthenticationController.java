@@ -11,6 +11,7 @@ import com.rental.rentalapplication.dto.response.AuthenticationResponse;
 import com.rental.rentalapplication.dto.response.IntrospectResponse;
 import com.rental.rentalapplication.service.impl.AuthenticationServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -70,7 +71,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    ApiResponse<AuthenticationResponse> register(@RequestBody AuthenticationRequest request) {
+    ApiResponse<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest request) {
         var result = authenticationServiceImpl.register(request); // Gọi service để đăng ký
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("Registration successful")
@@ -81,7 +82,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
+    ApiResponse<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         var result = authenticationServiceImpl.authenticate(request); // Gọi service để đăng nhập
         return ApiResponse.<AuthenticationResponse>builder()
                 .message("Login successful")

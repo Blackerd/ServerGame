@@ -25,7 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/token",
-            "/auth/introspect", "/rent/expireRent", "/auth/refresh", "/auth/login", "/auth/"};
+            "/auth/introspect","/auth/register", "/rent/expireRent", "/auth/refresh", "/auth/login", "/auth/"};
 
 
     @Autowired
@@ -37,7 +37,7 @@ public class SecurityConfig {
                 request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                         .permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/game").permitAll()
                         .anyRequest().authenticated()
         );
 

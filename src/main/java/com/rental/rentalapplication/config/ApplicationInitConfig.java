@@ -30,13 +30,13 @@ public class ApplicationInitConfig {
     ApplicationRunner applicationRunner(UserRepository userRepository,
                                         RoleRepository roleRepository) {
         return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()) {
+            if (userRepository.findByEmail("admin").isEmpty()) {
                 Set<Role> roles = new HashSet<>();
                 var role = roleRepository.findById("ADMIN").orElseThrow(() -> new CustomException(Error.ROLE_NOT_FOUND));
                 roles.add(role);
 
                 User user = User.builder()
-                        .username("admin")
+                        .email("admin")
                         .password(passwordEncoder.encode("admin"))
                         .roles(roles)
                         .build();

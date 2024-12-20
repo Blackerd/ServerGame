@@ -19,7 +19,7 @@ public class LeaderBoard {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // UUID duy nhất cho từng bản ghi bảng xếp hạng.
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // Người chơi liên quan.
 
@@ -31,4 +31,15 @@ public class LeaderBoard {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt; // Lần cập nhật gần nhất.
+
+    @Version
+    private Long version; // Sử dụng để kiểm tra xem có ai cập nhật dữ liệu không.
+
+    // Constructor không tham số để JPA sử dụng
+    public LeaderBoard(User user, int score, int rank, LocalDateTime updatedAt) {
+        this.user = user;
+        this.score = score;
+        this.rank = rank;
+        this.updatedAt = updatedAt;
+    }
 }

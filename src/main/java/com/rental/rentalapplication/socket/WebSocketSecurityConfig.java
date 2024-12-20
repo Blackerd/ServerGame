@@ -15,7 +15,6 @@ public class WebSocketSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/ws/auth/**").authenticated() // Chỉ cho phép người dùng đã xác thực mới có thể kết nối WebSocket
                         .anyRequest().permitAll() // Các request khác vẫn có thể được truy cập không cần xác thực
                 )
                 .csrf(csrf -> csrf.disable()); // Tắt CSRF vì WebSocket không sử dụng cookie CSRF

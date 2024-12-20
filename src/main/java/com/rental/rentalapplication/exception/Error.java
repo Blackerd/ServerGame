@@ -23,7 +23,8 @@ public enum Error {
     VEHICLE_EXISTED("Vehicle already existed", "Vehicle already exists, change to another vehicle", HttpStatus.BAD_REQUEST),
     VEHICLE_RENTED("Vehicle rent", "This vehicle is rented", HttpStatus.BAD_REQUEST),
     HOUSE_RENTED("House rented", "This house is rented", HttpStatus.BAD_REQUEST),
-    HOUSE_AND_VEHICEL_RENTED("House and vehicle is rented", "House and vehicle is rented", HttpStatus.BAD_REQUEST);
+    HOUSE_AND_VEHICEL_RENTED("House and vehicle is rented", "House and vehicle is rented", HttpStatus.BAD_REQUEST),
+    EMAIL_INVALID("Email is invalid", "Email is invalid", HttpStatus.BAD_REQUEST);
     private String message;
     private String violation;
     private HttpStatusCode statusCode;
