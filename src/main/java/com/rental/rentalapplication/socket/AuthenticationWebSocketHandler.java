@@ -201,22 +201,37 @@ public class AuthenticationWebSocketHandler extends TextWebSocketHandler {
         String email = jsonObject.optString("email");
         String password = jsonObject.optString("password");
 
+        // Kiểm tra dữ liệu đầu vào
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
-            session.sendMessage(new TextMessage("Error: Email and password must not be empty"));
+            JSONObject errorResponse = new JSONObject();
+            errorResponse.put("action", "register");
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Email and password must not be empty");
+            session.sendMessage(new TextMessage(errorResponse.toString()));
             return;
         }
 
+        // Gọi dịch vụ đăng ký
         AuthenticationRequest registerRequest = new AuthenticationRequest(email, password);
         AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
+
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("action", "register");
 
         if (registerResponse.isAuthenticated()) {
             // Lưu roles và email vào session attributes
             session.getAttributes().put("roles", registerResponse.getRoles());
             session.getAttributes().put("userEmail", registerResponse.getEmail());
+
+            jsonResponse.put("success", true);
+            jsonResponse.put("message", "Registration successful");
+        } else {
+            jsonResponse.put("success", false);
+            jsonResponse.put("message", "Registration failed");
         }
 
-        // Gửi phản hồi cho client
-        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(registerResponse)));
+        // Gửi phản hồi JSON về client
+        session.sendMessage(new TextMessage(jsonResponse.toString()));
     }
 
     private void handleLogout(WebSocketSession session) throws Exception {
@@ -233,8 +248,15 @@ public class AuthenticationWebSocketHandler extends TextWebSocketHandler {
 
     private void handleLeaderBoard(WebSocketSession session) throws Exception {
         List<LeaderBoardResponse> leaderboard = leaderBoardService.getAllPlayers();
-        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(leaderboard)));
+
+        // Wrap the leaderboard response in an object with "action" field
+        JSONObject response = new JSONObject();
+        response.put("action", "leaderboard");
+        response.put("data", leaderboard);
+
+        session.sendMessage(new TextMessage(response.toString()));
     }
+
 
     private void handleUserInfo(WebSocketSession session) throws Exception {
         try {

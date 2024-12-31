@@ -55,12 +55,14 @@ public class GameServiceImpl implements GameService {
         leaderBoardService.updateUserScore(user.getId(), score);
     }
 
+    @Transactional
     @Override
     public List<GameSession> getTopScores() {
         // Truy xuất danh sách top 10
         return gameSessionRepository.findTopScores(Pageable.ofSize(10));
     }
 
+    @Transactional
     @Override
     public List<GameSession> getGameSessionsByUserId(UUID userId) {
         userRepository.findById(userId).orElseThrow(() -> new CustomException(Error.USER_NOT_EXISTED));

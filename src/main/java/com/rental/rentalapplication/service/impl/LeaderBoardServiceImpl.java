@@ -29,6 +29,7 @@ public class LeaderBoardServiceImpl implements LeaderBoardService {
     private final LeaderBoardRepository leaderBoardRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public List<LeaderBoardResponse> getAllPlayers() {
         List<LeaderBoard> leaderBoards = leaderBoardRepository.findAll()
@@ -54,6 +55,7 @@ public class LeaderBoardServiceImpl implements LeaderBoardService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public LeaderBoard getPlayerById(UUID id) {
         Optional<LeaderBoard> player = leaderBoardRepository.findById(id);
@@ -89,6 +91,7 @@ public class LeaderBoardServiceImpl implements LeaderBoardService {
         }
     }
 
+    @Transactional
     @Override
     public void deletePlayer(UUID id) {
         if (leaderBoardRepository.existsById(id)) {
@@ -99,6 +102,7 @@ public class LeaderBoardServiceImpl implements LeaderBoardService {
     }
 
 
+    @Transactional
     @Override
     @Cacheable(value = "leaderboard", key = "#userId")
     public LeaderBoardResponse getUserRank(UUID userId) {
@@ -132,6 +136,7 @@ public class LeaderBoardServiceImpl implements LeaderBoardService {
         return convertToResponse(leaderBoard);
     }
 
+    @Transactional
     @Override
     public List<LeaderBoardResponse> getAllLeaderBoards() {
         // Fetch all leaderboards sorted by rank

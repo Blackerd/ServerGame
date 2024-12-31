@@ -19,7 +19,7 @@ public class LeaderBoard {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id; // UUID duy nhất cho từng bản ghi bảng xếp hạng.
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // Người chơi liên quan.
 

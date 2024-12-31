@@ -1,6 +1,7 @@
 package com.rental.rentalapplication.dto.response;
 
 import com.rental.rentalapplication.service.LeaderBoardService;
+import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ public class LeaderBoardScheduler {
 
     private final LeaderBoardService leaderBoardService;
 
+    @Transactional
     @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
     public void updateLeaderBoard() {
         leaderBoardService.getAllPlayers();

@@ -13,6 +13,7 @@ import com.rental.rentalapplication.mapper.UserMapper;
 import com.rental.rentalapplication.repository.RoleRepository;
 import com.rental.rentalapplication.repository.UserRepository;
 import com.rental.rentalapplication.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -64,12 +65,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public List<UserResponse> getUsers() {
         log.info("In method get users");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
+    @Transactional
     @Override
     public UserResponse getUserById(UUID userId) {
         var user = userRepository.findById(userId)
@@ -77,6 +80,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Transactional
     @PostAuthorize("returnObject.email == authentication.name")
     @Override
     public UserResponse getUserByEmail(String email) {
@@ -85,6 +89,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Transactional
     @Override
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
@@ -96,6 +101,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(UUID userId) {
@@ -105,6 +111,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public Page<UserResponse> getAllUsers(Integer pageNo, Integer pageSize) {
@@ -115,6 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUserByAdmin(UUID id, UserUpdateRequest request) {
@@ -130,6 +138,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public void deactivateUser(UUID userId) {
@@ -140,6 +149,7 @@ public class UserServiceImpl implements UserService {
         log.info("User {} has been deactivated", userId);
     }
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public void activateUser(UUID userId) {
@@ -151,6 +161,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public void blockUser(UUID userId) {
@@ -161,6 +172,7 @@ public class UserServiceImpl implements UserService {
         log.info("User {} has been blocked", userId);
     }
 
+    @Transactional
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public void unblockUser(UUID userId) {
@@ -172,11 +184,13 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
     @Override
     public long countOnlineUsers() {
         return userRepository.countByIsOnlineTrue();
     }
 
+    @Transactional
     @Override
     public SystemStatsResponse getSystemStats() {
         return SystemStatsResponse.builder()
@@ -203,6 +217,7 @@ public class UserServiceImpl implements UserService {
         log.info("Maintenance mode disabled by admin");
     }
 
+    @Transactional
     @Override
     public List<OnlineUserDTO> getOnlineUserDetails() {
         List<UserRepository.OnlineUserProjection> projections = userRepository.findOnlineUsers();
@@ -228,6 +243,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void setUserOnline(String email, boolean isOnline) {
         User user = userRepository.findByEmail(email)
