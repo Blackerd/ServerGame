@@ -49,7 +49,6 @@ public class AuthenticationWebSocketHandler extends TextWebSocketHandler {
     // Sử dụng ConcurrentMap để quản lý các WebSocketSession
     private final ConcurrentMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
-
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
@@ -115,8 +114,6 @@ public class AuthenticationWebSocketHandler extends TextWebSocketHandler {
                 case "viewRank":
                     handleViewRank(session);
                     break;
-
-                // Các hành động của admin:
                 case "blockUser":
                     handleBlockUser(jsonObject, session);
                     break;
@@ -470,4 +467,35 @@ public class AuthenticationWebSocketHandler extends TextWebSocketHandler {
         List<LeaderBoardResponse> leaderBoards = leaderBoardService.getAllLeaderBoards();
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(leaderBoards)));
     }
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        // Lấy thông tin người chơi từ session (nếu có)
+        String email = (String) session.getAttributes().get("userEmail");
+        if (email != null) {
+            // Lưu session vào ConcurrentMap với key là email
+            sessions.put(email, session);
+            log.info("User connected: {}", email);
+        } else {
+            // Nếu không có email, có thể gán một ID ngẫu nhiên hoặc xử lý theo cách khác
+            String sessionId = session.getId();
+            sessions.put(sessionId, session);
+            log.info("Anonymous user connected: {}", sessionId);
+        }
+    }
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        // Lấy thông tin người chơi từ session (nếu có)
+        String email = (String) session.getAttributes().get("userEmail");
+        if (email != null) {
+            // Xóa session khỏi ConcurrentMap bằng key là email
+            sessions.remove(email);
+            log.info("User disconnected: {}", email);
+        } else {
+            // Nếu không có email, xóa bằng session ID
+            String sessionId = session.getId();
+            sessions.remove(sessionId);
+            log.info("Anonymous user disconnected: {}", sessionId);
+        }
+    }
+
 }
