@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM maven:3.8.6-openjdk-17 AS build
+FROM maven:3.8.6-openjdk-21 AS build
 # Thiết lập thư mục làm việc
 WORKDIR /app
 # Sao chép pom.xml và tải xuống các phụ thuộc Maven
